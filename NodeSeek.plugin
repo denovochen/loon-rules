@@ -1,0 +1,18 @@
+#!name = NodeSeek
+#!desc = NodeSeek Cookie 捕获 + 每日定时自动签到（Loon 版）
+#!author = Nullwhy / Loon conversion
+#!homepage = https://github.com/Nullwhy/Egern
+#!icon = https://raw.githubusercontent.com/Nullwhy/Egern/main/Icon/Nullwhy.png
+#!type = normal
+
+[Argument]
+cron = input,"0 10 * * *",tag=签到时间,desc=CRON 格式：分 时 日 月 周；默认每天 10:00
+fixed_legs = switch,false,tag=鸡腿,desc=关闭=随机鸡腿；开启=固定 5 鸡腿
+capture = switch,false,tag=Cookie 捕获,desc=开启后访问 NodeSeek 个人页保存请求头；成功后请关闭
+
+[Script]
+http-response ^https:\/\/www\.nodeseek\.com\/api\/account\/getInfo\/ script-path=https://raw.githubusercontent.com/denovochen/loon-rules/master/NodeSeek.js,timeout=30,tag=NodeSeek Cookie,argument=[{capture}],enable={capture}
+cron {cron} script-path=https://raw.githubusercontent.com/denovochen/loon-rules/master/NodeSeek.js,timeout=60,tag=NodeSeek 签到,argument=[{fixed_legs}]
+
+[MITM]
+hostname = www.nodeseek.com
